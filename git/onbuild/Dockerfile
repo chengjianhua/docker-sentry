@@ -1,4 +1,6 @@
-FROM sentry:git
+# 基础的 git 镜像名称, 大致为: `stag-reg.llsops.com/platform-rls/sentry:git`
+ARG SENTRY_GIT_IMAGE
+FROM ${SENTRY_GIT_IMAGE}
 
 WORKDIR /usr/src/sentry
 

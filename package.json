@@ -1,0 +1,17 @@
+{
+  "name": "docker-sentry",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git://github.com/getsentry/docker-sentry.git",
+  "author": "Jianhua Cheng <w.chengjianhua@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build:git": "node build-git.js"
+  },
+  "dependencies": {
+    "execa": "^1.0.0",
+    "request": "^2.88.0",
+    "request-promise-native": "^1.0.5"
+  }
+}
