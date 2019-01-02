@@ -1,5 +1,6 @@
 const execa = require('execa');
 const request = require('request-promise-native');
+const IS_CI = require('is-ci');
 
 buildGitImages()
   .then(() => {
@@ -12,7 +13,7 @@ buildGitImages()
 
 async function buildGitImages() {
   const dockerRegistry = readEnv('DOCKER_REG', 'stag-reg.llsops.com');
-  const dockerProject = readEnv('DOCKER_PROJECT', 'platform-rls');
+  const dockerProject = readEnv('DOCKER_PROJECT', 'frontend-rls');
   const sentryBuild = readEnv('SENTRY_BUILD', await getLatestSha());
   const dockerImageName = 'sentry';
 
@@ -47,9 +48,10 @@ async function buildGit({
     'git',
   ]);
 
-  await exec('docker', ['push', dockerImageFull]);
-
-  await exec('docker', ['rm', dockerImageFull]);
+  if (IS_CI) {
+    await exec('docker', ['push', dockerImageFull]);
+    await exec('docker', ['rmi', dockerImageFull]);
+  }
 }
 
 async function buildGitOnBuild({
@@ -72,9 +74,11 @@ async function buildGitOnBuild({
     'git/onbuild',
   ]);
 
-  await exec('docker', ['push', dockerImageFull]);
+  if (IS_CI) {
+    await exec('docker', ['push', dockerImageFull]);
 
-  await exec('docker', ['rm', dockerImageFull]);
+    await exec('docker', ['rmi', dockerImageFull]);
+  }
 }
 
 async function getLatestSha() {

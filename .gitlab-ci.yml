@@ -7,7 +7,13 @@ variables:
 .package_git_template: &package_git_template
   script:
     # install node.js 10.x
-    - curl -sL https://deb.nodesource.com/setup_10.x | bash - && apt-get install -y nodejs
+    - curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
+    - export NVM_DIR="$HOME/.nvm"
+    - '[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"' # This loads nvm
+
+    # v10.x
+    - nvm install lts/dubnium
+
     - npm install
     # - export HTTP_PROXY=http://stag.s.llsops.com:8123; export HTTPS_PROXY=http://stag.s.llsops.com:8123
     - npm run build:git
