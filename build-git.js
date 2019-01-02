@@ -24,9 +24,9 @@ async function buildGitImages() {
     dockerImageName,
   };
 
-  await buildGit(commonOptions);
+  const sentryGitImage = await buildGit(commonOptions);
 
-  await buildGitOnBuild(commonOptions);
+  await buildGitOnBuild({ ...commonOptions, sentryGitImage });
 }
 
 async function buildGit({
@@ -52,6 +52,8 @@ async function buildGit({
     await exec('docker', ['push', dockerImageFull]);
     await exec('docker', ['rmi', dockerImageFull]);
   }
+
+  return dockerImageFull;
 }
 
 async function buildGitOnBuild({
@@ -68,7 +70,7 @@ async function buildGitOnBuild({
     'build',
     '--rm',
     '--build-arg',
-    sentryGitImage,
+    `SENTRY_GIT_IMAGE=${sentryGitImage}`,
     '-t',
     dockerImageFull,
     'git/onbuild',
@@ -79,6 +81,8 @@ async function buildGitOnBuild({
 
     await exec('docker', ['rmi', dockerImageFull]);
   }
+
+  return dockerImageFull;
 }
 
 async function getLatestSha() {
